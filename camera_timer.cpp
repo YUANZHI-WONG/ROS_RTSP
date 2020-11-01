@@ -5,23 +5,20 @@
 #include <sensor_msgs/image_encodings.h>
 #include <opencv2/highgui/highgui.hpp>
 
+#include "ffmpegDecode.h"
+
 class CameraDriver
 {
 public:
   enum Default
   {
-    DEFAULT_CAMERA_INDEX = 0,
-    DEFAULT_FPS = 30
+    DEFAULT_FPS = 10
   };
 
-  CameraDriver( int camera_index = DEFAULT_CAMERA_INDEX )
-    : nh( "~" )
-    , it( nh )
-    , camera_index( camera_index )
-    , camera( camera_index )
+  CameraDriver( std::string  camera_url ): nh( "~" ) , it( nh ) , rtsp_read( camera_url )
   {
-    nh.param<int>( "camera_index", camera_index, DEFAULT_CAMERA_INDEX );
-    if ( not camera.isOpened() )
+    
+    if ( not rtsp_read.readOneFrame(); )
     {
       ROS_ERROR_STREAM( "Failed to open camera device!" );
       ros::shutdown();
@@ -46,7 +43,11 @@ public:
 
   void capture( const ros::TimerEvent& te )
   {
-    camera >> frame->image;
+    //camera >> frame->image;
+    rtsp_read.readOneFrame();
+    rtsp_read.getDecodedFrame() >> frame->image;
+
+
     if( not frame->image.empty() )
     {
       frame->header.stamp = ros::Time::now();
@@ -62,8 +63,12 @@ private:
   int camera_index;
   int fps;
 
-  cv::VideoCapture camera;
+  //cv::VideoCapture camera;
+
+  ffmpegDecode rtsp_read
+
   cv::Mat image;
+
   cv_bridge::CvImagePtr frame;
 
   ros::Timer timer;
@@ -76,10 +81,14 @@ int main( int argc, char* argv[] )
 
   ros::NodeHandle nh( "~" );
 
-  int camera_index = CameraDriver::DEFAULT_CAMERA_INDEX;
-  nh.param( "camera_index", camera_index, camera_index );
+  //int camera_index = CameraDriver::DEFAULT_CAMERA_INDEX;
+  //nh.param( "camera_index", camera_index, camera_index );
 
-  CameraDriver camera_driver( camera_index );
+  std::string camera_rtsp; 
+  
+  nh.param<std::string>("camera_rtsp_url",camera_rtsp,"rtmp://58.200.131.2:1935/livetv/hunantv");
+
+  CameraDriver camera_driver( camera_rtsp );
 
   while( ros::ok() )
   {

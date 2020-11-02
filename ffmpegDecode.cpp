@@ -1,4 +1,5 @@
 #include "ffmpegDecode.h"
+#include <string.h>
  
 ffmpegDecode :: ~ffmpegDecode()
 {
@@ -9,7 +10,7 @@ ffmpegDecode :: ~ffmpegDecode()
     avformat_close_input(&pFormatCtx);
 }
  
-ffmpegDecode :: ffmpegDecode(std::string file)
+ffmpegDecode :: ffmpegDecode(char* file)
 {
     pAvFrame = NULL/**pFrameRGB = NULL*/;
     pFormatCtx  = NULL;
@@ -28,11 +29,12 @@ ffmpegDecode :: ffmpegDecode(std::string file)
  
     if (NULL == file)
     {
-        filepath("opencv.h264");
+        filepath="opencv.h264";
     }
     else
     {
-        filepath( file );
+        //filepath( file );
+	strcpy(filepath,file);
     }
  
     init();

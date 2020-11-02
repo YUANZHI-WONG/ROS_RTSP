@@ -11,6 +11,7 @@ extern "C"
 #include "libavformat/avformat.h"
 //图像转换结构需要引入的头文件
 #include "libswscale/swscale.h"
+
 };
  
  
@@ -45,7 +46,7 @@ private:
     int    i; 
     int videoindex;
  
-    std::string filepath;
+    char* filepath;
     int ret, got_picture;
     SwsContext *img_convert_ctx;
     int y_size;

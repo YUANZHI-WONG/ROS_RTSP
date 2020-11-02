@@ -17,22 +17,24 @@ aux_source_directory(. SRC_LIST)
 # 设置ffmpeg依赖库及头文件所在目录，并存进指定变量
 set(ffmpeg_libs_DIR /usr/include/ffmpeg/lib)
 set(ffmpeg_headers_DIR /usr/include/ffmpeg/include)
- 
+
+set(OpenCV_DIR /opt/ros/kinetic/share/OpenCV-3.3.1-dev/)
+
+
 #用find_package引入外部依赖包
-find_package(
-       
+find_package(       
       catkin REQUIRED
       COMPONENTS
       roscpp
       message_generation
       sensor_msgs
-      dynamic_reconfigure
+      
       cv_bridge
       image_transport
       camera_info_manager
-      tf
-      
-      OpenCV REQUIRED)
+      tf      
+      )
+find_package( OpenCV REQUIRED )
 
 
 
@@ -41,7 +43,7 @@ catkin_package(
       roscpp
       message_runtime
       sensor_msgs
-      dynamic_reconfigure
+      
       cv_bridge
       image_transport
       camera_info_manager
@@ -82,7 +84,9 @@ include_directories( ${OpenCV_INCLUDE_DIRS} ${ffmpeg_headers_DIR}  ${catkin_INCL
 # 该可执行目标是由SRC_LIST中所列出的源文件生成
 add_executable(${PROJECT_NAME} ${SRC_LIST} )
 # directory of opencv library
-link_directories(${OpenCV_LIBRARY_DIRS} ${ffmpeg_libs_DIR} )
+link_directories(${OpenCV_LIBRARY_DIRS} )
+
+link_directories( ${ffmpeg_libs_DIR} )
  
 # 链接目标文件与依赖库
 target_link_libraries( ${PROJECT_NAME} ${OpenCV_LIBS} ${catkin_LIBRARIES} avcodec avformat avutil swresample swscale swscale avfilter ffmpegDecode )

@@ -42,7 +42,7 @@ public:
     //camera >> frame->image;
     
     rtsp_read.readOneFrame();
-
+    
    // cv::Mat Img = rtsp_read.getDecodedFrame();
     //cv::Mat Img2;
     //resize(Img, Img2,  cv::Size(640, 480));
@@ -64,7 +64,6 @@ public:
        cvWaitKey(10);*/
     }
     
-
 
 
     if( not frame->image.empty() )
@@ -92,20 +91,19 @@ private:
 int main( int argc, char* argv[] )
 {
   ros::init( argc, argv, "camera" );
-  ros::NodeHandle nh( "~" ); 
 
-  //char camera_rtsp[1024]=argv[1];
-  //cout<<"-------------------------"<<endl;
-  //cout<<argv[1]<<endl;
-  //cout<<"-------------------------"<<endl;
-  // char* camera_rtsp="rtmp://58.200.131.2:1935/livetv/hunantv";
-  //char camera_rtsp[1024]="rtsp://admin:wanji123@192.168.2.101:554/cam/realmonitor?channel=1&subtype=0";
+  ros::NodeHandle nh( "~" );
 
+ 
 
- // char* camera_rtsp="rtmp://58.200.131.2:1935/livetv/hunantv"; 
+   //char camera_rtsp[1024]=argv[1];
+  cout<<"-------------------------"<<endl;
+   cout<<argv[1]<<endl;
+cout<<"-------------------------"<<endl;
+ // char* camera_rtsp="rtmp://58.200.131.2:1935/livetv/hunantv";
+   //char camera_rtsp[1024]="rtsp://admin:wanji123@192.168.2.101:554/cam/realmonitor?channel=1&subtype=0";
+
   
-  //nh.param<char*>("camera_rtsp_url",camera_rtsp,"rtmp://58.200.131.2:1935/livetv/hunantv");
-
 
   CameraDriver camera_driver(argv[1] );
 

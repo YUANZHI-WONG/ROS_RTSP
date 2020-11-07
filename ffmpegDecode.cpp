@@ -1,18 +1,15 @@
 #include "ffmpegDecode.h"
-#include <string.h>
  
 ffmpegDecode :: ~ffmpegDecode()
 {
     pCvMat->release();
-    //é‡Šæ”¾æœ¬æ¬¡è¯»å–çš„å¸§å†…å­˜
+    //ÊÍ·Å±¾´Î¶ÁÈ¡µÄÖ¡ÄÚ´æ
     av_free_packet(packet);
     avcodec_close(pCodecCtx);
     avformat_close_input(&pFormatCtx);
 }
  
-
 ffmpegDecode :: ffmpegDecode(char * file)
-
 {
     pAvFrame = NULL/**pFrameRGB = NULL*/;
     pFormatCtx  = NULL;
@@ -33,19 +30,16 @@ ffmpegDecode :: ffmpegDecode(char * file)
  
     if (NULL == file)
     {
-
-        filepath="opencv.h264";
+        filepath =  "opencv.h264";
     }
     else
     {
-        //filepath( file );
-	strcpy(filepath,file);
-
+        filepath = file;
     }
 
     optionsDict = NULL;
-    av_dict_set(&optionsDict, "rtsp_transport", "tcp", 0);                //é‡‡ç”¨tcpä¼ è¾“	,,å¦‚æœä¸è®¾ç½®è¿™ä¸ªæœ‰äº›rtspæµå°±ä¼šå¡ç€
-    av_dict_set(&optionsDict, "stimeout", "2000000", 0);                  //å¦‚æœæ²¡æœ‰è®¾ç½®stimeout
+    av_dict_set(&optionsDict, "rtsp_transport", "tcp", 0);                //²ÉÓÃtcp´«Êä	,,Èç¹û²»ÉèÖÃÕâ¸öÓĞĞ©rtspÁ÷¾Í»á¿¨×Å
+    av_dict_set(&optionsDict, "stimeout", "2000000", 0);                  //Èç¹ûÃ»ÓĞÉèÖÃstimeout
  
     init();
     openDecode();
@@ -63,11 +57,11 @@ void ffmpegDecode :: init()
 
     if(avformat_open_input(&pFormatCtx,filepath,0,&optionsDict)!=0)
     {
-        printf("æ— æ³•æ‰“å¼€æ–‡ä»¶\n");
+        printf("ÎŞ·¨´ò¿ªÎÄ¼ş\n");
         return;
     }
  
-    //æŸ¥æ‰¾æ–‡ä»¶çš„æµä¿¡æ¯,avformat_open_inputå‡½æ•°åªæ˜¯æ£€æµ‹äº†æ–‡ä»¶çš„å¤´éƒ¨ï¼Œæ¥ç€è¦æ£€æŸ¥åœ¨æ–‡ä»¶ä¸­çš„æµçš„ä¿¡æ¯
+    //²éÕÒÎÄ¼şµÄÁ÷ĞÅÏ¢,avformat_open_inputº¯ÊıÖ»ÊÇ¼ì²âÁËÎÄ¼şµÄÍ·²¿£¬½Ó×ÅÒª¼ì²éÔÚÎÄ¼şÖĞµÄÁ÷µÄĞÅÏ¢
     //if(av_find_stream_info(pFormatCtx)<0)
     //{
     //    printf("Couldn't find stream information.\n");
@@ -87,7 +81,7 @@ void ffmpegDecode :: init()
  
 void ffmpegDecode :: openDecode()
 {
-    //éå†æ–‡ä»¶çš„å„ä¸ªæµï¼Œæ‰¾åˆ°ç¬¬ä¸€ä¸ªè§†é¢‘æµï¼Œå¹¶è®°å½•è¯¥æµçš„ç¼–ç ä¿¡æ¯
+    //±éÀúÎÄ¼şµÄ¸÷¸öÁ÷£¬ÕÒµ½µÚÒ»¸öÊÓÆµÁ÷£¬²¢¼ÇÂ¼¸ÃÁ÷µÄ±àÂëĞÅÏ¢
     videoindex = -1;
     for(i=0; i<pFormatCtx->nb_streams; i++) 
     {
@@ -104,7 +98,7 @@ void ffmpegDecode :: openDecode()
     }
     pCodecCtx=pFormatCtx->streams[videoindex]->codec;
  
-    //åœ¨åº“é‡Œé¢æŸ¥æ‰¾æ”¯æŒè¯¥æ ¼å¼çš„è§£ç å™¨
+    //ÔÚ¿âÀïÃæ²éÕÒÖ§³Ö¸Ã¸ñÊ½µÄ½âÂëÆ÷
     pCodec=avcodec_find_decoder(pCodecCtx->codec_id);
     if(pCodec==NULL)
     {
@@ -112,7 +106,7 @@ void ffmpegDecode :: openDecode()
         return;
     }
  
-    //æ‰“å¼€è§£ç å™¨
+    //´ò¿ª½âÂëÆ÷
     if(avcodec_open2(pCodecCtx, pCodec,NULL) < 0)
     {
         printf("Could not open codec.\n");
@@ -120,17 +114,17 @@ void ffmpegDecode :: openDecode()
     }
 
 
-    //åˆ†é…ä¸€ä¸ªå¸§æŒ‡é’ˆï¼ŒæŒ‡å‘è§£ç åçš„åŸå§‹å¸§
+    //·ÖÅäÒ»¸öÖ¡Ö¸Õë£¬Ö¸Ïò½âÂëºóµÄÔ­Ê¼Ö¡
     pAvFrame=av_frame_alloc();
     y_size = pCodecCtx->width * pCodecCtx->height;
-    //åˆ†é…å¸§å†…å­˜
+    //·ÖÅäÖ¡ÄÚ´æ
     packet=(AVPacket *)av_malloc(sizeof(AVPacket));
     av_new_packet(packet, y_size);
  
-    //è¾“å‡ºä¸€ä¸‹ä¿¡æ¯-----------------------------
+    //Êä³öÒ»ÏÂĞÅÏ¢-----------------------------
     printf("stream info-----------------------------------------\n");
     av_dump_format(pFormatCtx,0,filepath,0);
-    //av_dump_formatåªæ˜¯ä¸ªè°ƒè¯•å‡½æ•°ï¼Œè¾“å‡ºæ–‡ä»¶çš„éŸ³ã€è§†é¢‘æµçš„åŸºæœ¬ä¿¡æ¯äº†ï¼Œå¸§ç‡ã€åˆ†è¾¨ç‡ã€éŸ³é¢‘é‡‡æ ·ç­‰ç­‰
+    //av_dump_formatÖ»ÊÇ¸öµ÷ÊÔº¯Êı£¬Êä³öÎÄ¼şµÄÒô¡¢ÊÓÆµÁ÷µÄ»ù±¾ĞÅÏ¢ÁË£¬Ö¡ÂÊ¡¢·Ö±æÂÊ¡¢ÒôÆµ²ÉÑùµÈµÈ
     printf("-------------------------------------------------\n");
 }  
 
@@ -172,16 +166,16 @@ cv::Mat ffmpegDecode :: getDecodedFrame()
 {
     if(packet->stream_index==videoindex)
     {
-        //è§£ç ä¸€ä¸ªå¸§
+        //½âÂëÒ»¸öÖ¡
         ret = avcodec_decode_video2(pCodecCtx, pAvFrame, &got_picture, packet);
         if(ret < 0)
         {
-            printf("è§£ç é”™è¯¯\n");
+            printf("½âÂë´íÎó\n");
             return cv::Mat();
         }
         if(got_picture)
         {
-            //æ ¹æ®ç¼–ç ä¿¡æ¯è®¾ç½®æ¸²æŸ“æ ¼å¼
+            //¸ù¾İ±àÂëĞÅÏ¢ÉèÖÃäÖÈ¾¸ñÊ½
             if(img_convert_ctx == NULL){
                 img_convert_ctx = sws_getContext(pCodecCtx->width, pCodecCtx->height,
                     ConvertDeprecatedFormat(pCodecCtx->pix_fmt), pCodecCtx->width, pCodecCtx->height,
@@ -217,7 +211,7 @@ void ffmpegDecode :: get(AVCodecContext    * pCodecCtx, SwsContext * img_convert
     uint8_t  *out_bufferRGB = NULL;
     pFrameRGB = av_frame_alloc();
  
-    //ç»™pFrameRGBå¸§åŠ ä¸Šåˆ†é…çš„å†…å­˜;
+    //¸øpFrameRGBÖ¡¼ÓÉÏ·ÖÅäµÄÄÚ´æ;
     int size = avpicture_get_size(AV_PIX_FMT_BGR24, pCodecCtx->width, pCodecCtx->height);
     out_bufferRGB = new uint8_t[size];
     avpicture_fill((AVPicture *)pFrameRGB, out_bufferRGB, AV_PIX_FMT_BGR24, pCodecCtx->width, pCodecCtx->height);

@@ -2,17 +2,11 @@
 ## 支持库的安装
 
 ```
-sudo apt-get install -y autoconf automake build-essential git libass-dev libfreetype6-dev libsdl2-dev libtheora-dev libtool libva-dev libvdpau-dev libvorbis-dev libxcb1-dev libxcb-shm0-dev libxcb-xfixes0-dev pkg-config texinfo wget zlib1g-dev
-sudo apt install yasm libsdl2-dev libx264-dev libx265-dev libfdk-aac-dev
+sudo apt-get install -y autoconf automake build-essential git libass-dev libfreetype6-dev libsdl2-dev libtheora-dev libtool libva-dev libvdpau-dev libvorbis-dev libxcb1-dev libxcb-shm0-dev libxcb-xfixes0-dev pkg-config texinfo wget zlib1g-dev yasm libsdl2-dev libx264-dev libx265-dev libfdk-aac-dev
 ```
 
 ```
-sudo apt install libavformat-dev
-sudo apt install libavcodec-dev
-sudo apt install libswresample-dev
-sudo apt install libswscale-dev
-sudo apt install libavutil-dev
-sudo apt install libsdl1.2-dev
+sudo apt install libavformat-dev libavcodec-dev libswresample-dev libswscale-dev libavutil-dev  libsdl1.2-dev
 
 ```
 支持库的简介如下：    
@@ -34,7 +28,7 @@ git clone git://source.ffmpeg.org/ffmpeg.git ffmpeg
 ```
 
 ```
-./configure   --enable-shared  --prefix=/usr/local/ffmpeg  --enable-gpl --enable-libx264  --enable-libx265   
+./configure   --enable-shared  --prefix=/usr/include/ffmpeg  --enable-gpl --enable-libx264  --enable-libx265   
 
 ```
 

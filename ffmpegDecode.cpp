@@ -9,7 +9,7 @@ ffmpegDecode :: ~ffmpegDecode()
     avformat_close_input(&pFormatCtx);
 }
  
-ffmpegDecode :: ffmpegDecode(std::string file)
+ffmpegDecode :: ffmpegDecode(char * file)
 {
     pAvFrame = NULL/**pFrameRGB = NULL*/;
     pFormatCtx  = NULL;
@@ -25,34 +25,37 @@ ffmpegDecode :: ffmpegDecode(std::string file)
     img_convert_ctx = NULL;
     y_size = 0;
     packet = NULL;
+
+   
  
     if (NULL == file)
     {
-        filepath("opencv.h264");
+        filepath =  "opencv.h264";
     }
     else
     {
-        filepath( file );
+        filepath = file;
     }
+
+    optionsDict = NULL;
+    av_dict_set(&optionsDict, "rtsp_transport", "tcp", 0);                //采用tcp传输	,,如果不设置这个有些rtsp流就会卡着
+    av_dict_set(&optionsDict, "stimeout", "2000000", 0);                  //如果没有设置stimeout
  
     init();
     openDecode();
-    prepare();
+   
  
     return;
 }
  
 void ffmpegDecode :: init()
 {
-    //ffmpeg注册复用器，编码器等的函数av_register_all()。
-    //该函数在所有基于ffmpeg的应用程序中几乎都是第一个被调用的。只有调用了该函数，才能使用复用器，编码器等。
-    //这里注册了所有的文件格式和编解码器的库，所以它们将被自动的使用在被打开的合适格式的文件上。注意你只需要调用 av_register_all()一次，因此我们在主函数main()中来调用它。如果你喜欢，也可以只注册特定的格式和编解码器，但是通常你没有必要这样做。
+    
     av_register_all();
- 
-    //pFormatCtx = avformat_alloc_context();
-    //打开视频文件,通过参数filepath来获得文件名。这个函数读取文件的头部并且把信息保存到我们给的AVFormatContext结构体中。
-    //最后2个参数用来指定特殊的文件格式，缓冲大小和格式参数，但如果把它们设置为空NULL或者0，libavformat将自动检测这些参数。
-    if(avformat_open_input(&pFormatCtx,filepath,NULL,NULL)!=0)
+    avformat_network_init(); 
+
+
+    if(avformat_open_input(&pFormatCtx,filepath,0,&optionsDict)!=0)
     {
         printf("无法打开文件\n");
         return;
@@ -109,10 +112,8 @@ void ffmpegDecode :: openDecode()
         printf("Could not open codec.\n");
         return;
     }
-}  
- 
-void ffmpegDecode :: prepare()
-{
+
+
     //分配一个帧指针，指向解码后的原始帧
     pAvFrame=av_frame_alloc();
     y_size = pCodecCtx->width * pCodecCtx->height;
@@ -125,7 +126,34 @@ void ffmpegDecode :: prepare()
     av_dump_format(pFormatCtx,0,filepath,0);
     //av_dump_format只是个调试函数，输出文件的音、视频流的基本信息了，帧率、分辨率、音频采样等等
     printf("-------------------------------------------------\n");
+}  
+
+
+
+AVPixelFormat ffmpegDecode :: ConvertDeprecatedFormat(enum AVPixelFormat format)
+{
+    switch (format)
+    {
+    case AV_PIX_FMT_YUVJ420P:
+        return AV_PIX_FMT_YUV420P;
+        break;
+    case AV_PIX_FMT_YUVJ422P:
+        return AV_PIX_FMT_YUV422P;
+        break;
+    case AV_PIX_FMT_YUVJ444P:
+        return AV_PIX_FMT_YUV444P;
+        break;
+    case AV_PIX_FMT_YUVJ440P:
+        return AV_PIX_FMT_YUV440P;
+        break;
+    default:
+        return format;
+        break;
+    }
 }
+
+ 
+
  
 int ffmpegDecode :: readOneFrame()
 {
@@ -150,8 +178,8 @@ cv::Mat ffmpegDecode :: getDecodedFrame()
             //根据编码信息设置渲染格式
             if(img_convert_ctx == NULL){
                 img_convert_ctx = sws_getContext(pCodecCtx->width, pCodecCtx->height,
-                    pCodecCtx->pix_fmt, pCodecCtx->width, pCodecCtx->height,
-                    AV_PIX_FMT_BGR24, SWS_BICUBIC, NULL, NULL, NULL); 
+                    ConvertDeprecatedFormat(pCodecCtx->pix_fmt), pCodecCtx->width, pCodecCtx->height,
+                    AV_PIX_FMT_BGR24, SWS_FAST_BILINEAR, NULL, NULL, NULL); 
             }    
             //----------------------opencv
             if (pCvMat->empty())
@@ -200,12 +228,15 @@ void ffmpegDecode :: get(AVCodecContext    * pCodecCtx, SwsContext * img_convert
 /*
 int main()
 {
-	//ffmpegDecode rtsp_read("rtsp://admin:wanji123@192.168.2.101:554/cam/realmonitor?channel=1&subtype=0");
-       ffmpegDecode rtsp_read("rtmp://58.200.131.2:1935/livetv/hunantv");
+	ffmpegDecode rtsp_read("rtsp://admin:wanji123@192.168.2.101:554/cam/realmonitor?channel=1&subtype=0");
+       //ffmpegDecode rtsp_read("rtmp://58.200.131.2:1935/livetv/hunantv");
        while(1){ 
         rtsp_read.readOneFrame();
 	cv::Mat Img = rtsp_read.getDecodedFrame();
-         imshow("233333Show", Img);
+          if(!Img.empty()){
+        imshow("window", Img);
+    }
+
 	//imshow("2333",Img);
 	cvWaitKey(1);
          

@@ -15,8 +15,11 @@ extern "C"   /*这里必须要使用C方式导入*/
 #include "libavutil/avutil.h"
 #include "libavutil/time.h"
 #include "libswscale/swscale.h"
+
 #include "libavutil/pixdesc.h"
-}
+
+};
+
  
 #pragma comment(lib, "avformat.lib")
 #pragma comment(lib, "avdevice.lib")
@@ -47,8 +50,10 @@ private:
  
     int    i; 
     int videoindex;
+
     
     char *filepath;
+
     int ret, got_picture;
     SwsContext *img_convert_ctx;
     int y_size;

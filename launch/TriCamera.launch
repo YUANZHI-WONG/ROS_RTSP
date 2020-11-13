@@ -2,9 +2,9 @@
 <launch>
   <!-- Run driver -->
   <!--node name="camera" pkg="camera_driver" type="camera_driver" output="screen" args="&quotrtsp://admin:wanji123@192.168.2.101:554/cam/realmonitor?channel=1&ampsubtype=0&quot" -->
-    <node pkg="camera_driver" type="camera_driver" name="camera_n" args="&quot;rtsp://admin:wanji123@192.168.2.101:554/cam/realmonitor?channel=1&amp;subtype=0 &quot;" />
-    <node pkg="camera_driver" type="camera_driver" name="camera_s" args="&quot;rtsp://admin:wanji123@192.168.2.102:554/cam/realmonitor?channel=1&amp;subtype=0 &quot;" />
-    <node pkg="camera_driver" type="camera_driver" name="camera_w" args="&quot;rtsp://admin:wanji123@192.168.2.100:554/cam/realmonitor?channel=1&amp;subtype=0 &quot;" />
+    <node pkg="camera_driver" type="camera_driver" name="camera_101" args="&quot;rtsp://admin:wanji123@192.168.2.101:554/cam/realmonitor?channel=1&amp;subtype=0 &quot;" />
+    <node pkg="camera_driver" type="camera_driver" name="camera_102" args="&quot;rtsp://admin:wanji123@192.168.2.102:554/cam/realmonitor?channel=1&amp;subtype=0 &quot;" />
+    <node pkg="camera_driver" type="camera_driver" name="camera_100" args="&quot;rtsp://admin:wanji123@192.168.2.100:554/cam/realmonitor?channel=1&amp;subtype=0 &quot;" />
     
 </launch>
 

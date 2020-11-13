@@ -15,10 +15,12 @@ SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 #aux_source_directory(./src SRC_LIST)
 SET(SRC_LIST ./src/camera_timer.cpp ./src/ffmpegDecode.cpp ./src/ffmpegDecode.h)
 # 设置ffmpeg依赖库及头文件所在目录，并存进指定变量
-set(ffmpeg_libs_DIR /usr/include/ffmpeg/lib)
-set(ffmpeg_headers_DIR /usr/include/ffmpeg/include)
 
-set(OpenCV_DIR /opt/ros/kinetic/share/OpenCV-3.3.1-dev/)
+
+#set(ffmpeg_libs_DIR /usr/local/ffmpeg/lib)
+set(ffmpeg_DIR "/usr/local/ffmpeg")
+
+set(OpenCV_DIR /usr/local/opencv4)
 
 
 #用find_package引入外部依赖包
@@ -50,34 +52,35 @@ catkin_package(
       tf)
  
 
-add_library( avcodec SHARED IMPORTED )
 
+# 添加头文件路径到编译器的头文件搜索路径下，多个路径以空格分隔
+include_directories( ${OpenCV_INCLUDE_DIRS} ${ffmpeg_headers_DIR}  ${catkin_INCLUDE_DIRS})
 #对于find_package找不到的外部依赖库，可以用add_library添加
 # SHARED表示添加的是动态库
 # IMPORTED表示是引入已经存在的动态库
 add_library( ffmpegDecode ./src/ffmpegDecode.cpp )
 
 #指定所添加依赖库的导入路径
-set_target_properties( avcodec PROPERTIES IMPORTED_LOCATION ${ffmpeg_libs_DIR}/libavcodec.so )
+
+#add_library( avcodec SHARED IMPORTED )
+#set_target_properties( avcodec PROPERTIES IMPORTED_LOCATION ${ffmpeg_libs_DIR}/libavcodec.so )
  
-add_library( avfilter SHARED IMPORTED )
-set_target_properties( avfilter PROPERTIES IMPORTED_LOCATION ${ffmpeg_libs_DIR}/libavfilter.so )
+#add_library( avfilter SHARED IMPORTED )
+#set_target_properties( avfilter PROPERTIES IMPORTED_LOCATION ${ffmpeg_libs_DIR}/libavfilter.so )
  
-add_library( swresample SHARED IMPORTED )
-set_target_properties( swresample PROPERTIES IMPORTED_LOCATION ${ffmpeg_libs_DIR}/libswresample.so )
+
+
+#add_library( swscale SHARED IMPORTED )
+#set_target_properties( swscale PROPERTIES IMPORTED_LOCATION ${ffmpeg_libs_DIR}/libswscale.so )
  
-add_library( swscale SHARED IMPORTED )
-set_target_properties( swscale PROPERTIES IMPORTED_LOCATION ${ffmpeg_libs_DIR}/libswscale.so )
+#add_library( avformat SHARED IMPORTED )
+#set_target_properties( avformat PROPERTIES IMPORTED_LOCATION ${ffmpeg_libs_DIR}/libavformat.so )
  
-add_library( avformat SHARED IMPORTED )
-set_target_properties( avformat PROPERTIES IMPORTED_LOCATION ${ffmpeg_libs_DIR}/libavformat.so )
- 
-add_library( avutil SHARED IMPORTED )
-set_target_properties( avutil PROPERTIES IMPORTED_LOCATION ${ffmpeg_libs_DIR}/libavutil.so )
+#add_library( avutil SHARED IMPORTED )
+#set_target_properties( avutil PROPERTIES IMPORTED_LOCATION ${ffmpeg_libs_DIR}/libavutil.so )
  
  
-# 添加头文件路径到编译器的头文件搜索路径下，多个路径以空格分隔
-include_directories( ${OpenCV_INCLUDE_DIRS} ${ffmpeg_headers_DIR}  ${catkin_INCLUDE_DIRS})
+
  
  
 # 添加一个可执行目标，名称可自己指定，本例是直接用工程名称命名的
@@ -86,10 +89,11 @@ add_executable(${PROJECT_NAME} ${SRC_LIST} )
 # directory of opencv library
 link_directories(${OpenCV_LIBRARY_DIRS} )
 
-link_directories( ${ffmpeg_libs_DIR} )
+#link_directories( ${ffmpeg_libs_DIR} )
  
 # 链接目标文件与依赖库
-target_link_libraries( ${PROJECT_NAME} ${OpenCV_LIBS} ${catkin_LIBRARIES} avcodec avformat avutil swresample swscale swscale avfilter ffmpegDecode )
+#target_link_libraries( ${PROJECT_NAME} ${OpenCV_LIBS} ${catkin_LIBRARIES} avcodec avformat avutil swscale swscale avfilter ffmpegDecode )
+target_link_libraries( ${PROJECT_NAME} ${OpenCV_LIBS} ${catkin_LIBRARIES} libavcodec.so libavformat.so libavutil.so libswscale.so libavfilter.so libswresample.so libpostproc.so ffmpegDecode )
 
 
 

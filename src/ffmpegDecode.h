@@ -26,6 +26,8 @@ extern "C"   /*这里必须要使用C方式导入*/
 #pragma comment(lib, "swscale.lib")
 #pragma comment(lib, "swresample.lib")
 #pragma comment(lib, "postproc.lib")
+
+
  
 using namespace std;
 using namespace cv;

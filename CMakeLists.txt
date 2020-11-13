@@ -12,8 +12,8 @@ SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
  
 # aux_source_directory会查找指定目录下的所有源文件，并将结果存入指定变量名
 # 这里是将当前目录下的所有源文件存进变量SRC_LIST
-aux_source_directory(. SRC_LIST)
- 
+#aux_source_directory(./src SRC_LIST)
+SET(SRC_LIST ./src/camera_timer.cpp ./src/ffmpegDecode.cpp ./src/ffmpegDecode.h)
 # 设置ffmpeg依赖库及头文件所在目录，并存进指定变量
 set(ffmpeg_libs_DIR /usr/include/ffmpeg/lib)
 set(ffmpeg_headers_DIR /usr/include/ffmpeg/include)
@@ -55,7 +55,7 @@ add_library( avcodec SHARED IMPORTED )
 #对于find_package找不到的外部依赖库，可以用add_library添加
 # SHARED表示添加的是动态库
 # IMPORTED表示是引入已经存在的动态库
-add_library( ffmpegDecode ffmpegDecode.cpp )
+add_library( ffmpegDecode ./src/ffmpegDecode.cpp )
 
 #指定所添加依赖库的导入路径
 set_target_properties( avcodec PROPERTIES IMPORTED_LOCATION ${ffmpeg_libs_DIR}/libavcodec.so )

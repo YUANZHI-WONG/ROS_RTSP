@@ -17,10 +17,10 @@ SET(SRC_LIST ./src/camera_timer.cpp ./src/ffmpegDecode.cpp ./src/ffmpegDecode.h)
 # 设置ffmpeg依赖库及头文件所在目录，并存进指定变量
 
 
-#set(ffmpeg_libs_DIR /usr/local/ffmpeg/lib)
+#set(ffmpeg_libs_DIR /usr/local/ffmpeg/lib) 根据实际安装位置， 修改此处ffmpeg路径
 set(ffmpeg_DIR "/usr/local/ffmpeg")
 
-set(OpenCV_DIR /usr/local/opencv4)
+#set(OpenCV_DIR /usr/local/opencv4)
 
 
 #用find_package引入外部依赖包
